@@ -1,0 +1,1 @@
+const struct device *const dht11 = DEVICE_DT_GET_ONE(aosong_dht);

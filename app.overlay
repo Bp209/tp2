@@ -1,0 +1,19 @@
+/ {
+    gpio_keys {
+        compatible = "gpio-keys";
+        ledyellow: led_yellow {
+        gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+        label = "LED 1";
+        };
+    };
+    aliases {
+        led-yellow = &ledyellow;
+    };
+
+    dht11: dht11 {
+                    compatible = "aosong,dht";
+                    status = "okay";
+                    dio-gpios = <&gpio0 17 GPIO_ACTIVE_LOW>;
+                    label = "XHT11";
+                 };
+};
