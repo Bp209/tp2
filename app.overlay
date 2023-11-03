@@ -1,0 +1,82 @@
+/ {
+    leds {
+        compatible = "gpio-leds";
+        ledyellow: led_yellow {
+            gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+            label = "Orange LED";
+        };
+    };
+
+    aliases {
+        led-yellow = &ledyellow;
+        afficheur-print = &afficheur;
+        sw16 = &button16;
+        sw27 = &button27;
+        buzz = &buzzer;
+        alar = &alarme;
+    };
+
+    dht11: dht11 {
+        compatible = "aosong,dht";
+        status = "okay";
+        dio-gpios = <&gpio0 17 GPIO_ACTIVE_LOW>;
+        label = "XHT11";
+    };
+
+    zephyr,user {
+        io-channels = <&adc0 6>;
+    };
+
+    buttons {
+        compatible = "gpio-keys";
+        button16: button_16 {
+            gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+            label = "User button";
+        };
+
+        button27: button_27 {
+            gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
+            label = "User button";
+        };
+
+    };
+
+    buzzer {
+        compatible = "gpio-keys";
+        buzzer: buzzer_25 {
+            gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
+            label = "User Buzzer";
+        };
+
+    };
+
+    alarme {
+        compatible = "gpio-keys";
+        alarme: alarme_14 {
+            gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+            label = "User Alarme";
+        };
+    };
+};
+
+&i2c0 {
+    afficheur: afficheur_lcd@27 {
+        compatible = "i2c-device";
+        reg = <0x27>;
+    };
+
+};
+
+&adc0 {
+    status = "okay";
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    channel@6 {
+        reg = <6>;
+        zephyr,gain = "ADC_GAIN_1_4";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
+};
