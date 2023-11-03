@@ -80,3 +80,7 @@
         zephyr,resolution = <12>;
     };
 };
+
+&wifi {
+    status = "okay";
+};

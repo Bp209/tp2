@@ -5,14 +5,18 @@
 #include "../inc/lcd_screen_i2c.h"
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/adc.h>
-
+//#include "../inc/http_get.h"
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/net_event.h>
+#include <errno.h>
 #define LED_YELLOW_NODE DT_ALIAS(led_yellow)
 #define AFFICHEUR_NODE DT_ALIAS(afficheur_print)
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) \
     ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
 
 #define BUZZER_PIN DT_ALIAS(buzz)
-#define BUZZER_TOGGLE_PERIOD K_MSEC(100)
+#define BUZZER_TOGGLE_PERIOD K_MSEC(1)
 #define ALARM_NODE DT_ALIAS(alar)
 
 static bool ALARME = false;
@@ -124,6 +128,7 @@ int main(void)
 void alarm_button_thread()
 {
     int count = 0;
+    gpio_pin_configure_dt(&buzzer_gpio, GPIO_OUTPUT_LOW);
     init_lcd(&afficheur);
     while (1)
     {
@@ -138,15 +143,14 @@ void alarm_button_thread()
             if (presence)
             {
                 printk("Présence détectée\n");
+                gpio_pin_set_dt(&buzzer_gpio, 1);
                 k_sleep(BUZZER_TOGGLE_PERIOD);
-                gpio_pin_configure_dt(&buzzer_gpio, GPIO_OUTPUT_LOW);
-                k_sleep(BUZZER_TOGGLE_PERIOD);
-                gpio_pin_configure_dt(&buzzer_gpio, GPIO_OUTPUT_HIGH);
+                gpio_pin_set_dt(&buzzer_gpio, 0);
                 k_sleep(BUZZER_TOGGLE_PERIOD);
 
                 count++;
 
-                if (count >= 5)
+                if (count == 5)
                 {
                     write_lcd(&afficheur, " ATTENTION !!!! ", LCD_LINE_1);
                     write_lcd(&afficheur, "DANGER INTRU !!!", LCD_LINE_2);
